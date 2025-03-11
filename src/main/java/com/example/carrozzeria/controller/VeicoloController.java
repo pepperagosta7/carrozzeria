@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import com.example.carrozzeria.model.Veicolo;
 import com.example.carrozzeria.service.VeicoloService;
 
+import jakarta.validation.Valid;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -45,19 +47,19 @@ public class VeicoloController {
     }
 
     @PostMapping
-    public ResponseEntity<Veicolo> addVeicolo(@RequestBody Veicolo veicolo){
+    public ResponseEntity<Veicolo> addVeicolo(@Valid @RequestBody Veicolo veicolo){
         Veicolo newVeicolo = veicoloService.addVeicolo(veicolo);
         URI location = URI.create(String.format("/api/users/%d", newVeicolo.getId()));
         return ResponseEntity.created(location).body(newVeicolo);
     }
 
     @DeleteMapping("/{targa}")
-    public List<Veicolo> deleteVeicolo(@PathVariable String targa){
+    public List<Veicolo> deleteVeicolo(@Valid @PathVariable String targa){
         return veicoloService.deleteVeicoloIfRepaired(targa);
     }
 
     @PutMapping("/{targa}/stato")   
-    public ResponseEntity<Veicolo> updateVeicolo(@PathVariable String targa, @RequestBody Veicolo veicolo){
+    public ResponseEntity<Veicolo> updateVeicolo(@PathVariable String targa, @Valid @RequestBody Veicolo veicolo){
         Veicolo updatedVeicolo = veicoloService.updateStatoRiparazione(targa, veicolo.getStatoRiparazione());
         return updatedVeicolo != null ? ResponseEntity.ok(updatedVeicolo) : ResponseEntity.notFound().build();
     }

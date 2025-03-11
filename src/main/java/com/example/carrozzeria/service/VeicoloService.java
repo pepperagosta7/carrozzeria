@@ -1,5 +1,6 @@
 package com.example.carrozzeria.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,11 +13,11 @@ import com.example.carrozzeria.model.Veicolo;
 public class VeicoloService {
     
     private final List<Veicolo> veicoli = new ArrayList<>(List.of(
-            new Veicolo(1L, "AA111BB", "Panda", "Fiat", "2021-01-01", "In lavorazione"),
-            new Veicolo(2L, "CC222DD", "Ypsilon", "Lancia", "2021-01-02", "In attesa"),
-            new Veicolo(3L, "EE333FF", "3008", "Peugeot", "2021-01-03", "In lavorazione"),
-            new Veicolo(4L, "GG444HH", "Punto", "Fiat", "2021-01-04", "Completato"),
-            new Veicolo(5L, "II555JJ", "Panda", "Fiat", "2021-01-05", "In attesa")
+            new Veicolo(1L, "AA111BB", "Panda", "Fiat", LocalDate.of(2021, 01, 01), "In lavorazione"),
+            new Veicolo(2L, "CC222DD", "Ypsilon", "Lancia", LocalDate.of(2021,01,02), "In attesa"),
+            new Veicolo(3L, "EE333FF", "3008", "Peugeot", LocalDate.of(2021,01,03), "In lavorazione"),
+            new Veicolo(4L, "GG444HH", "Punto", "Fiat", LocalDate.of(2021,01,04), "Completato"),
+            new Veicolo(5L, "II555JJ", "Panda", "Fiat", LocalDate.of(2021,01,05), "In attesa")
     ));
 
     public List<Veicolo> getVeicoli() {
