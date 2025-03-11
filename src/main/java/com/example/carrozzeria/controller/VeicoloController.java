@@ -34,12 +34,12 @@ public class VeicoloController {
                         .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/search/{targa}")
+    @GetMapping("/search/targa")
     public List<Veicolo> findVeicolobyTarga(@RequestParam String targa){
         return veicoloService.findByTarga(targa);
     }
 
-    @GetMapping("/search/{marca}")
+    @GetMapping("/search/marca")
     public List<Veicolo> findVeicolobyMarca(@RequestParam String marca){
         return veicoloService.findByMarca(marca);
     }
@@ -51,14 +51,14 @@ public class VeicoloController {
         return ResponseEntity.created(location).body(newVeicolo);
     }
 
-    @DeleteMapping("/{id}")
-    public List<Veicolo> deleteVeicolo(@PathVariable Long id){
-        return veicoloService.deleteVeicoloIfRepaired(id);
+    @DeleteMapping("/{targa}")
+    public List<Veicolo> deleteVeicolo(@PathVariable String targa){
+        return veicoloService.deleteVeicoloIfRepaired(targa);
     }
 
-    @PutMapping("/{id}")   
-    public ResponseEntity<Veicolo> updateVeicolo(@PathVariable Long id, @RequestBody Veicolo veicolo){
-        Veicolo updatedVeicolo = veicoloService.updateStatoRiparazione(id, veicolo.getStatoRiparazione());
+    @PutMapping("/{targa}/stato")   
+    public ResponseEntity<Veicolo> updateVeicolo(@PathVariable String targa, @RequestBody Veicolo veicolo){
+        Veicolo updatedVeicolo = veicoloService.updateStatoRiparazione(targa, veicolo.getStatoRiparazione());
         return updatedVeicolo != null ? ResponseEntity.ok(updatedVeicolo) : ResponseEntity.notFound().build();
     }
 

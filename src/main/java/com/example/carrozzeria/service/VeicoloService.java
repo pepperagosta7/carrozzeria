@@ -32,14 +32,14 @@ public class VeicoloService {
         return veicolo;
     }
 
-    public List<Veicolo> deleteVeicoloIfRepaired(Long id) {
-        veicoli.removeIf(veicolo -> veicolo.getId().equals(id) && veicolo.getStatoRiparazione().equals("Completato"));
+    public List<Veicolo> deleteVeicoloIfRepaired(String targa) {
+        veicoli.removeIf(veicolo -> veicolo.getTarga().equals(targa) && veicolo.getStatoRiparazione().equals("Completato"));
         return veicoli;
     }
 
-    public Veicolo updateStatoRiparazione(Long id, String statoRiparazione) {
+    public Veicolo updateStatoRiparazione(String targa, String statoRiparazione) {
         for (Veicolo veicolo : veicoli) {
-            if (veicolo.getId().equals(id)) {
+            if (veicolo.getTarga().equals(targa)) {
                 veicolo.setStatoRiparazione(statoRiparazione);
                 return veicolo;
             }
