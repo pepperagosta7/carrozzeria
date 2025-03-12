@@ -1,62 +1,61 @@
 package com.example.carrozzeria.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.carrozzeria.model.Veicolo;
+import com.example.carrozzeria.repository.VeicoloRepository;
 
 @Service
 public class VeicoloService {
-    
-    private final List<Veicolo> veicoli = new ArrayList<>(List.of(
-            new Veicolo(1L, "AA111BB", "Panda", "Fiat", LocalDate.of(2021, 01, 01), "In lavorazione"),
-            new Veicolo(2L, "CC222DD", "Ypsilon", "Lancia", LocalDate.of(2021,01,02), "In attesa"),
-            new Veicolo(3L, "EE333FF", "3008", "Peugeot", LocalDate.of(2021,01,03), "In lavorazione"),
-            new Veicolo(4L, "GG444HH", "Punto", "Fiat", LocalDate.of(2021,01,04), "Completato"),
-            new Veicolo(5L, "II555JJ", "Panda", "Fiat", LocalDate.of(2021,01,05), "In attesa")
-    ));
+
+    private final VeicoloRepository veicoloRepository;
+
+    public VeicoloService(VeicoloRepository veicoloRepository) {
+        this.veicoloRepository = veicoloRepository;
+    }
 
     public List<Veicolo> getVeicoli() {
-        return veicoli;
+        return veicoloRepository.findAll();
     }
 
-    public Optional<Veicolo> getVeicoloById(Long id) {
-        return veicoli.stream().filter(veicolo -> veicolo.getId().equals(id)).findFirst();
+    public Veicolo getVeicoloById(Long id) {
+        return veicoloRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Veicolo with id " + id + " not found"));
     }
 
+    @Transactional
     public Veicolo addVeicolo(Veicolo veicolo) {
-        veicoli.add(veicolo);
-        return veicolo;
+        return veicoloRepository.save(veicolo);
     }
 
-    public List<Veicolo> deleteVeicoloIfRepaired(String targa) {
-        veicoli.removeIf(veicolo -> veicolo.getTarga().equals(targa) && veicolo.getStatoRiparazione().equals("Completato"));
-        return veicoli;
+    public Optional<Veicolo> findByTarga(String targa) {
+        return veicoloRepository.findByTarga(targa);
+    }
+
+    public List<Veicolo> findByMarca(String marca) {
+        return veicoloRepository.findByMarca(marca);
+    }
+
+    @Transactional
+    public void deleteVeicoloByTarga(String targa) {
+        veicoloRepository.findByTarga(targa).ifPresentOrElse(
+                veicoloRepository::delete,
+                () -> {
+                    throw new RuntimeException("Veicolo with targa " + targa + " not found");
+                }
+        );
     }
 
     public Veicolo updateStatoRiparazione(String targa, String statoRiparazione) {
-        for (Veicolo veicolo : veicoli) {
-            if (veicolo.getTarga().equals(targa)) {
-                veicolo.setStatoRiparazione(statoRiparazione);
-                return veicolo;
-            }
-        }
-        return null;
+        Veicolo veicolo = veicoloRepository.findByTarga(targa)
+                .orElseThrow(() -> new RuntimeException("Veicolo with targa " + targa + " not found"));
+        veicolo.setStatoRiparazione(statoRiparazione);
+        return veicoloRepository.save(veicolo);
     }
 
-    public List<Veicolo> findByTarga (String targa){
-        return veicoli.stream()
-                    .filter(veicolo -> veicolo.getTarga().toLowerCase().contains(targa.toLowerCase()))
-                    .toList();
-    }
-
-    public List<Veicolo> findByMarca (String marca){
-        return veicoli.stream()
-                    .filter(veicolo -> veicolo.getMarca().toLowerCase().contains(marca.toLowerCase()))
-                    .toList();
-    }
+   
 }

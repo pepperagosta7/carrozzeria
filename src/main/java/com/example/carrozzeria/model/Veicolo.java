@@ -1,34 +1,36 @@
 package com.example.carrozzeria.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
 
+@Entity
+@Table(name = "veicoli")
 public class Veicolo {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "La targa è obbligatoria")
-    @Pattern(regexp = "^[A-Z]{2}[0-9]{3}[A-Z]{2}$", message = "Formato targa non valido (es: AB123CD)")
+    @Column(nullable = false, length = 50)
     private String targa;
 
-    @NotBlank(message = "Il modello è obbligatorio")
-    @Size(min = 2, max = 50, message = "Il modello deve avere tra 2 e 50 caratteri")
+    @Column(nullable = false, length = 50)
     private String modello; 
 
-    @NotBlank(message = "La marca è obbligatoria")
-    @Size(min = 2, max = 50, message = "La marca deve avere tra 2 e 50 caratteri")
+    @Column(nullable = false, length = 50)
     private String marca;
 
-    @PastOrPresent(message = "La data di nascita deve essere nel passato")
+    @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataIngresso;
 
-    @NotBlank(message = "Lo stato della riparazione è obbligatorio")
-    @Pattern(regexp = "^(In attesa|In corso|Completata)$", message = "Lo stato può essere solo 'In attesa', 'In corso' o 'Completata'")
+    @Column(nullable = false, length = 50)
     private String statoRiparazione;
+
+    public Veicolo(){
+    }
 
     public Veicolo(Long id, String targa, String modello, String marca, LocalDate dataIngresso, String statoRiparazione) {
         this.id = id;

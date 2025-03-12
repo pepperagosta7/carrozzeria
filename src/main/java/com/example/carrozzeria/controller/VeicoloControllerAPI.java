@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.carrozzeria.model.Veicolo;
 import com.example.carrozzeria.service.VeicoloService;
 
-import jakarta.validation.Valid;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +14,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/veicoli")
-public class VeicoloController {
+public class VeicoloControllerAPI {
     
     private final VeicoloService veicoloService;
 
-    public VeicoloController(VeicoloService veicoloService){
+    public VeicoloControllerAPI(VeicoloService veicoloService){
         this.veicoloService = veicoloService;
     }
 
@@ -31,13 +29,12 @@ public class VeicoloController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Veicolo> getVeicolobyId(@PathVariable Long id){
-        Optional<Veicolo> veicolo = veicoloService.getVeicoloById(id);
-        return veicolo.map(ResponseEntity::ok)
-                        .orElse(ResponseEntity.notFound().build());
+        Veicolo veicolo = veicoloService.getVeicoloById(id);
+        return ResponseEntity.ok(veicolo);
     }
 
     @GetMapping("/search/targa")
-    public List<Veicolo> findVeicolobyTarga(@RequestParam String targa){
+    public Optional<Veicolo> findVeicolobyTarga(@RequestParam String targa){
         return veicoloService.findByTarga(targa);
     }
 
@@ -47,21 +44,22 @@ public class VeicoloController {
     }
 
     @PostMapping
-    public ResponseEntity<Veicolo> addVeicolo(@Valid @RequestBody Veicolo veicolo){
+    public ResponseEntity<Veicolo> addVeicolo(@RequestBody Veicolo veicolo){
         Veicolo newVeicolo = veicoloService.addVeicolo(veicolo);
-        URI location = URI.create(String.format("/api/users/%d", newVeicolo.getId()));
+        URI location = URI.create("/api/users/" + newVeicolo.getId());
         return ResponseEntity.created(location).body(newVeicolo);
     }
 
     @DeleteMapping("/{targa}")
-    public List<Veicolo> deleteVeicolo(@Valid @PathVariable String targa){
-        return veicoloService.deleteVeicoloIfRepaired(targa);
+    public List<Veicolo> deleteVeicolo(@PathVariable String targa){
+        veicoloService.deleteVeicoloByTarga(targa);
+        return veicoloService.getVeicoli();
     }
 
     @PutMapping("/{targa}/stato")   
-    public ResponseEntity<Veicolo> updateVeicolo(@PathVariable String targa, @Valid @RequestBody Veicolo veicolo){
+    public ResponseEntity<Veicolo> updateVeicolo(@PathVariable String targa, @RequestBody Veicolo veicolo){
         Veicolo updatedVeicolo = veicoloService.updateStatoRiparazione(targa, veicolo.getStatoRiparazione());
-        return updatedVeicolo != null ? ResponseEntity.ok(updatedVeicolo) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updatedVeicolo);
     }
 
 }
